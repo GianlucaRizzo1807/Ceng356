@@ -43,7 +43,7 @@ void CPU(unsigned char *mem){
 //         read the code section from memory and
 //         get the 32-bit machine code from the memory.
 unsigned int CPU_fetchCode(char *mem, int codeOffset){
-    return 0;
+    return read_dword(mem, codeOffset);
 }
 
 // Lab 8 - Step 2. Finish the CPU_Decode function to
@@ -53,8 +53,12 @@ unsigned int CPU_fetchCode(char *mem, int codeOffset){
 //                i.e., I-, J- and R-type instructions. 
 //                The return value should be a 6-bit bianry code. 
 unsigned char CPU_Decode(unsigned int machineCode){
-
-return 0;
+    unsigned char opcode;
+    opcode = (machineCode >> 26) & 0x3F;
+    if (opcode = 0x00){
+        return (unsigned char)(machineCode & 0x3F);
+    }
+return opcode;
 
 }
 // Lab 9: Finish the function CPU_Execution to run all the instructions.
@@ -99,11 +103,21 @@ void CPU_Execution(unsigned char opcode, unsigned int machineCode, char *mem){
 //         $zero = 0x00000000
 //         $at  = ... ... etc.
 void printRegisterFiles(){
+    int i;
 
+    puts("\n---- Register File Dump ----");
+    for (i = 0; i < N_REG; i++) {
+        if (regNameTab[i] != NULL) {
+            printf("%-6s = 0x%08X\n", regNameTab[i], regFile[i]);
+        } else {
+            printf("$r%-3d = 0x%08X\n", i, regFile[i]);
+        }
+    }
 }
 
  // Lab 8 - Step 4. Call function memory_dump and pass the proper parameters to dump the first 256
 //          bytes from Data section.
-void printDataMemoryDump(){
-
+void printDataMemoryDump(unsigned char *mem){
+    puts("\nData Memory Dump");
+    memory_dump(mem, DATASECTION, 256);
 }

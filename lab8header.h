@@ -17,7 +17,7 @@ unsigned int CPU_fetchCode(char *mem, int codeOffset);
 unsigned char CPU_Decode(unsigned int machineCode);
 void CPU_Execution(unsigned char opcode, unsigned int machineCode, char *mem);
 void printRegisterFiles();
-void printDataMemoryDump();
+void printDataMemoryDump(unsigned char *mem);
 unsigned int PCRegister = 0;  // PC register, always pointing to the next instruction.  
 
 #endif /* LAB8HEADER_H */

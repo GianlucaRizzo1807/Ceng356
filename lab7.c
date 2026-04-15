@@ -153,7 +153,7 @@ void setupInstructionMemory( char* base_memory_address,
 
             // Then combine the answer above and finish this part of the code.
             opcode = 0x23;
-            machineCode = buildIInstruction(opcode, instructionStorage[i].rs, instructionStorage[i].rt, instructionStorage[i].address);
+            machineCode = buildIInstruction(opcode, instructionStorage[i].rs, instructionStorage[i].rt, instructionStorage[i].immediate);
             write_dword(base_memory_address, codeOffset+i*4, machineCode);
 
 
@@ -173,7 +173,7 @@ void setupInstructionMemory( char* base_memory_address,
 
             // Then combine the answer above and finish this part of the code.
             opcode = 0x2B;
-            machineCode = buildIInstruction(opcode, instructionStorage[i].rs, instructionStorage[i].rt, instructionStorage[i].address);
+            machineCode = buildIInstruction(opcode, instructionStorage[i].rs, instructionStorage[i].rt, instructionStorage[i].immediate);
             write_dword(base_memory_address, codeOffset+i*4, machineCode);
 
 
@@ -212,7 +212,7 @@ void setupInstructionMemory( char* base_memory_address,
 
             // Then combine the answer above and finish this part of the code.
             opcode = 0x08;
-            machineCode = buildIInstruction(opcode, instructionStorage[i].rs, instructionStorage[i].rt, instructionStorage[i].address);
+            machineCode = buildIInstruction(opcode, instructionStorage[i].rs, instructionStorage[i].rt, instructionStorage[i].immediate);
             write_dword(base_memory_address, codeOffset+i*4, machineCode);
 
 
