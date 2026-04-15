@@ -106,6 +106,6 @@ void write_dword(const char *base_address, const int offset, const unsigned int 
 unsigned char read_byte(const char *base_address, int offset);
 unsigned int read_dword(const char *base_address, int offset);
 void memory_dump(const char *base_address, const int offset, unsigned int dumpsize);
-void CPU(char *mem);   // This function needs to be finished in lab 10. 
+void CPU(unsigned char *mem);   // This function needs to be finished in lab 10. 
 #endif /* HEADER_H */
 

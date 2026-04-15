@@ -48,7 +48,7 @@ int main (int argc, char *argv[]) {
         puts("----Lab 7 Code Starts to Parse the ASM Code----");
         loadCodeToMem(mem);
         stopChar = getchar();
-		// puts("----Lab 8 Code Starts to Fetch and Decode the Code ----");
+		puts("----Lab 8 Code Starts to Fetch and Decode the Code ----");
         // Step 4: CPU Fetch the machinecode (lab 8)
         // Step 5: CPU Decode the machine code (lab 8)
 		
