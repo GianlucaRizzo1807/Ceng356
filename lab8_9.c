@@ -55,7 +55,7 @@ unsigned int CPU_fetchCode(char *mem, int codeOffset){
 unsigned char CPU_Decode(unsigned int machineCode){
     unsigned char opcode;
     opcode = (machineCode >> 26) & 0x3F;
-    if (opcode = 0x00){
+    if (opcode == 0x00){
         return (unsigned char)(machineCode & 0x3F);
     }
 return opcode;
