@@ -52,7 +52,7 @@ int main (int argc, char *argv[]) {
         // Step 4: CPU Fetch the machinecode (lab 8)
         // Step 5: CPU Decode the machine code (lab 8)
 		
-		// puts("----Lab 9 Code Starts to Execute the Code ----");
+		  puts("----Lab 9 Code Starts to Execute the Code ----");
         // Step 6: Execute the code until the code is finished(lab 9)                  
         CPU(mem);  // this is needed in lab 8 and later 
           // stopChar = getchar();

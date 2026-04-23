@@ -32,7 +32,7 @@ void CPU(unsigned char *mem){
 
       // Lab 9: Finish the execution of the code.
       // Only finish this part when the CPU_Decode is done.
-      // CPU_Execution(opcode, machineCode, mem);
+        CPU_Execution(opcode, machineCode, mem);
     }while (1);  // This is an infinite while loop
                  // When you fetch a machineCode of 00000000, the loop breaks.
     printRegisterFiles();     // After the code execution, print all the register contents on screen.
@@ -63,39 +63,86 @@ return opcode;
 }
 // Lab 9: Finish the function CPU_Execution to run all the instructions.
 void CPU_Execution(unsigned char opcode, unsigned int machineCode, char *mem){
-    unsigned char rt = 0;
-    switch (opcode)  // execute different functions when opcode is set differently. 
-    {
-		// This is an example how lab will be executed. Please follow this example and finish exections of the code.
-		// Hint: you need to implement the following instructions here: 
-		//       la, add, lb, bge, lw, sw, addi, j
-        case 0b101111:   //"la" instruction. 
-            // assign the address rt = immediate address stored in machineCode;
-            // first find the rt index in the register array. 
-            rt = (machineCode & 0x001F0000) >> 16; 
-            // assign the address stored in immediate field to regFile[rt];
-            regFile[rt] = machineCode & 0x0000FFFF;  // get the last 16 bit as address. 
-            // update PCregister ???? Pay special attention to branch instructions. 
-            PCRegister += 4;
-            if (DEBUG_CODE){   // print the hints to the user in DEBUG_MODE
-                printf("Code Executed: %08X\n", machineCode);
-                printf("****** PC Register is %08X ******\n", PCRegister);                
-            }            
+    unsigned char realOpcode, rs, rt, rd, shamt, funct;
+    unsigned int address;
+    short imm16;
+    int effectiveAddr;
+    unsigned int wordData;
+    signed char byteData;
+
+    // Re-decode from machineCode so R-type add does not collide with lb (both can look like 0x20)
+    realOpcode = (machineCode >> 26) & 0x3F;
+    rs        = (machineCode >> 21) & 0x1F;
+    rt        = (machineCode >> 16) & 0x1F;
+    rd        = (machineCode >> 11) & 0x1F;
+    shamt     = (machineCode >> 6)  & 0x1F;
+    funct     = machineCode & 0x3F;
+    imm16     = (short)(machineCode & 0xFFFF);   // sign-extended immediate
+    address   = machineCode & 0x03FFFFFF;
+
+    if (realOpcode == 0x00) {
+        // R-type instructions
+        switch (funct) {
+            case 0x20:  // add
+                regFile[rd] = regFile[rs] + regFile[rt];
+                break;
+
+            default:
+                printf("Unsupported R-type funct! funct=%02X code=%08X\n", funct, machineCode);
+                exit(3);
+        }
+    } else {
+        // I-type / J-type
+        switch (realOpcode) {
+            case 0x2F:  // la
+                // Load address from DATA section base
+                regFile[rt] = DATASECTION + (unsigned short)(machineCode & 0xFFFF);
             break;
-        case 0b100000://"lb" instruction. 
-		    //....
-			break;
-		
-        // continue to all the other cases used in the program.
-        // case ......:    
-            
-            
-        // Should never go to default part when complete. Otherwise, that is a mistake. 
-        default:
-            printf("Wrong instruction! You need to fix this instruction %02X %08X\n", opcode,  machineCode);
-            system("PAUSE");
-            exit(3);  // exit the program if running here.     
-            break;
+
+            case 0x20:  // lb
+                effectiveAddr = regFile[rs] + imm16;
+                byteData = (signed char) read_byte(mem, effectiveAddr);
+                regFile[rt] = (int) byteData;   // sign extend
+                break;
+
+            case 0x07:  // bge (custom handling in your lab7.c)
+                // parser/build code stored label address >> 2, so rebuild byte address here
+                if (regFile[rs] >= regFile[rt]) {
+                    PCRegister = ((unsigned short)(machineCode & 0xFFFF)) << 2;
+                }
+                break;
+
+            case 0x23:  // lw
+                effectiveAddr = regFile[rs] + imm16;
+                regFile[rt] = (int) read_dword(mem, effectiveAddr);
+                break;
+
+            case 0x2B:  // sw
+                effectiveAddr = regFile[rs] + imm16;
+                write_dword(mem, effectiveAddr, (unsigned int)regFile[rt]);
+                break;
+
+            case 0x08:  // addi
+                regFile[rt] = regFile[rs] + imm16;
+                break;
+
+            case 0x02:  // j
+                // your lab7 encoder stores absolute word address
+                PCRegister = address << 2;
+                break;
+
+            default:
+                printf("Wrong instruction! opcode=%02X code=%08X\n", realOpcode, machineCode);
+                exit(3);
+        }
+    }
+
+    // Keep $zero as zero
+    regFile[0] = 0;
+
+    if (DEBUG_CODE){
+        printf("Code Executed: %08X\n", machineCode);
+        printf("****** PC Register is %08X ******\n", PCRegister);
     }
 }
 // Lab 8 - Step 3. Print all the 32 registers in regFile and names saved in
